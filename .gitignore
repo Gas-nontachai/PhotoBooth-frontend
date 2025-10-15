@@ -1,14 +1,52 @@
-node_modules
+# ---------------------------------
+# Node.js dependencies
+# ---------------------------------
+node_modules/
+
+# ---------------------------------
+# Environment files
+# ---------------------------------
 .env
-dist
-build
-coverage
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
+.env.example
+
+# ---------------------------------
+# Build outputs
+# ---------------------------------
+dist/
+build/
+.next/
+out/
+coverage/
+
+# ---------------------------------
+# System files
+# ---------------------------------
 .DS_Store
-.vscode
-.idea
+Thumbs.db
+
+# ---------------------------------
+# Editor / IDE files
+# ---------------------------------
+.vscode/
+.idea/
+
+# ---------------------------------
+# Logs and temporary files
+# ---------------------------------
 *.log
 *.tmp
 *.swp
 *.bak
-*.old       
-.env.example
+*.old
+
+# ---------------------------------
+# Others (optional)
+# ---------------------------------
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

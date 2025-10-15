@@ -30,7 +30,6 @@ type Props = {
 
 export default function ProductForm({ onSaved, editing, createProduct, updateProduct }: Props) {
   const form = useForm<FormValues>({
-    // @ts-expect-error resolver typing mismatch
     resolver: zodResolver(schema),
     defaultValues: { name: '', description: '', priceCents: 0, sku: '', stock: 0 },
   });
