@@ -7,6 +7,9 @@ on:
     branches: [main]
 
 jobs:
+  # -------------------------------------------------------
+  # 🧩 1. Test, Lint, Typecheck, and Build
+  # -------------------------------------------------------
   test-and-build:
     name: Install, Lint, Typecheck, Build
     runs-on: ubuntu-latest
@@ -27,22 +30,22 @@ jobs:
         run: npm ci
 
       - name: Run ESLint
-        run: |
-          npm run lint --silent
+        run: npm run lint --silent
 
       - name: Typecheck
-        run: |
-          npx tsc --noEmit
+        run: npx tsc --noEmit
 
       - name: Build
-        run: |
-          npm run build --if-present
+        run: npm run build --if-present
 
+  # -------------------------------------------------------
+  # 🚀 2. Deploy to Vercel (only on main)
+  # -------------------------------------------------------
   deploy-vercel:
     name: Deploy to Vercel (optional)
     needs: test-and-build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && secrets.VERCEL_TOKEN && secrets.VERCEL_ORG_ID && secrets.VERCEL_PROJECT_ID
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -52,15 +55,20 @@ jobs:
         with:
           node-version: 20.x
 
-      - name: Install deps
+      - name: Install dependencies
         run: npm ci
 
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v21
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
+      # ✅ เช็กว่ามี secrets ครบหรือไม่ด้วย bash (ไม่ใช้ if:)
+      - name: Check and Deploy to Vercel
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
+            echo "❌ Missing Vercel secrets. Skipping deploy."
+            exit 0
+          fi
+
+          echo "✅ Secrets found. Deploying to Vercel..."
+          npx vercel --token=$VERCEL_TOKEN --prod --confirm
